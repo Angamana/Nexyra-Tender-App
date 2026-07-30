@@ -5,7 +5,7 @@ const gitExe = fs.existsSync('.\\tools\\git\\cmd\\git.exe') ? '.\\tools\\git\\cm
 
 try {
   console.log(execSync(`"${gitExe}" add .`).toString());
-  console.log(execSync(`"${gitExe}" commit -m "Configure GitHub Pages deploy workflow & Profile auth system"`).toString());
+  console.log(execSync(`"${gitExe}" commit --allow-empty -m "Trigger GitHub Pages deployment build"`).toString());
   console.log(execSync(`"${gitExe}" push origin main`).toString());
   console.log('Pushed successfully!');
 } catch (e) {
