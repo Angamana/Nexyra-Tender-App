@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './lib/auth'
 import { CompanyProvider } from './lib/companyContext'
 import { TenderProvider } from './lib/tenderContext'
