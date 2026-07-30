@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #000000;
+    --card: #f9fafb;
+    --card-foreground: #000000;
+    --border: #e5e7eb;
+    --input: #f3f4f6;
+    --ring: var(--color-blue-600);
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
