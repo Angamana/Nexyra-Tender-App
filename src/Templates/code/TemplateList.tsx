@@ -28,7 +28,6 @@ export default function TemplateList() {
       if (saved && saved.length > 0) {
         setTemplates(saved)
       }
-      setIsLoading(false)
     }).catch(console.error)
   }, [])
 

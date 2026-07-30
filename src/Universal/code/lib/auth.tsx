@@ -1,30 +1,89 @@
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 
-// This is a Mock Auth context since Supabase keys are not currently present in the .env file.
-// It hardcodes the requested user account for development and demonstration.
-
-type User = {
+export type User = {
+  name: string
   email: string
+  organization: string
   initial: string
 }
 
 type AuthContextType = {
   user: User | null
-  signIn: (email: string, pass: string) => boolean
+  signUp: (name: string, email: string, organization: string) => boolean
+  signIn: (email: string) => { success: boolean; message?: string }
   signOut: () => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+const USERS_STORAGE_KEY = 'nexyra_tender_users_db'
+const CURRENT_USER_KEY = 'nexyra_tender_current_user'
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  // To test the login screen initially, we'll start with null
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const saved = localStorage.getItem(CURRENT_USER_KEY)
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user))
+    } else {
+      localStorage.removeItem(CURRENT_USER_KEY)
+    }
+  }, [user])
+
+  const getStoredUsers = (): Record<string, User> => {
+    try {
+      const saved = localStorage.getItem(USERS_STORAGE_KEY)
+      return saved ? JSON.parse(saved) : {}
+    } catch {
+      return {}
+    }
+  }
+
+  const signUp = (name: string, email: string, organization: string) => {
+    const formattedEmail = email.trim().toLowerCase()
+    const users = getStoredUsers()
+    
+    const newUser: User = {
+      name: name.trim() || formattedEmail.split('@')[0],
+      email: formattedEmail,
+      organization: organization.trim() || 'Default Organization',
+      initial: (name.trim() || formattedEmail).charAt(0).toUpperCase()
+    }
+
+    users[formattedEmail] = newUser
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
+    setUser(newUser)
+    return true
+  }
 
   const signIn = (email: string) => {
-    // For development testing, allow any email/password combo
-    // We will hook this up to Supabase later
-    setUser({ email, initial: email.charAt(0).toUpperCase() || 'U' })
-    return true
+    const formattedEmail = email.trim().toLowerCase()
+    const users = getStoredUsers()
+    const existingUser = users[formattedEmail]
+
+    if (existingUser) {
+      setUser(existingUser)
+      return { success: true }
+    } else {
+      // Auto-create a profile if user enters a new email to make login effortless
+      const newUser: User = {
+        name: formattedEmail.split('@')[0],
+        email: formattedEmail,
+        organization: 'My Enterprise',
+        initial: formattedEmail.charAt(0).toUpperCase()
+      }
+      users[formattedEmail] = newUser
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
+      setUser(newUser)
+      return { success: true }
+    }
   }
 
   const signOut = () => {
@@ -32,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   )
