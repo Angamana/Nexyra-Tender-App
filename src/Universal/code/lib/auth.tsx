@@ -5,12 +5,13 @@ export type User = {
   email: string
   organization: string
   initial: string
+  password?: string
 }
 
 type AuthContextType = {
   user: User | null
-  signUp: (name: string, email: string, organization: string) => boolean
-  signIn: (email: string) => { success: boolean; message?: string }
+  signUp: (name: string, email: string, password: string, organization: string) => boolean
+  signIn: (email: string, password: string) => { success: boolean; message?: string }
   signOut: () => void
 }
 
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const signUp = (name: string, email: string, organization: string) => {
+  const signUp = (name: string, email: string, password: string, organization: string) => {
     const formattedEmail = email.trim().toLowerCase()
     const users = getStoredUsers()
     
@@ -54,7 +55,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       name: name.trim() || formattedEmail.split('@')[0],
       email: formattedEmail,
       organization: organization.trim() || 'Default Organization',
-      initial: (name.trim() || formattedEmail).charAt(0).toUpperCase()
+      initial: (name.trim() || formattedEmail).charAt(0).toUpperCase(),
+      password: password || ''
     }
 
     users[formattedEmail] = newUser
@@ -63,21 +65,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return true
   }
 
-  const signIn = (email: string) => {
+  const signIn = (email: string, password: string) => {
     const formattedEmail = email.trim().toLowerCase()
     const users = getStoredUsers()
     const existingUser = users[formattedEmail]
 
     if (existingUser) {
+      // If existing user has a password set, verify it
+      if (existingUser.password && password && existingUser.password !== password) {
+        return { success: false, message: 'Incorrect password. Please try again.' }
+      }
       setUser(existingUser)
       return { success: true }
     } else {
-      // Auto-create a profile if user enters a new email to make login effortless
+      // Auto-register user with provided password
       const newUser: User = {
         name: formattedEmail.split('@')[0],
         email: formattedEmail,
         organization: 'My Enterprise',
-        initial: formattedEmail.charAt(0).toUpperCase()
+        initial: formattedEmail.charAt(0).toUpperCase(),
+        password: password || ''
       }
       users[formattedEmail] = newUser
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))

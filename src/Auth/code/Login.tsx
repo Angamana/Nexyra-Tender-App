@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../Universal/code/lib/auth'
-import { UserPlus, LogIn, Building2, User as UserIcon, Mail } from 'lucide-react'
+import { UserPlus, LogIn, Building2, User as UserIcon, Mail, Lock } from 'lucide-react'
 
 export default function Login() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [organization, setOrganization] = useState('')
   const [error, setError] = useState('')
@@ -22,10 +23,10 @@ export default function Login() {
     }
 
     if (isSignUp) {
-      signUp(name, email, organization)
+      signUp(name, email, password, organization)
       navigate('/')
     } else {
-      const res = signIn(email)
+      const res = signIn(email, password)
       if (res.success) {
         navigate('/')
       } else {
@@ -114,6 +115,23 @@ export default function Login() {
           </div>
         </div>
 
+        <div>
+          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            Password
+          </label>
+          <div className="relative">
+            <Lock className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-sm"
+              required
+              placeholder="••••••••"
+            />
+          </div>
+        </div>
+
         {isSignUp && (
           <div>
             <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
@@ -139,6 +157,23 @@ export default function Login() {
           {isSignUp ? 'Create Profile & Enter Workspace' : 'Sign In to Workspace'}
         </button>
       </form>
+
+      <div className="mt-6 flex items-center justify-between">
+        <span className="border-b border-gray-200 w-1/5 lg:w-1/4"></span>
+        <span className="text-xs text-center text-gray-500 uppercase">Or continue with</span>
+        <span className="border-b border-gray-200 w-1/5 lg:w-1/4"></span>
+      </div>
+
+      <div className="mt-6 space-y-3">
+        <button type="button" className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-gray-700 font-medium rounded-md transition-colors shadow-sm">
+          <img src="./google.png" alt="Google" className="w-5 h-5 object-contain" />
+          Google
+        </button>
+        <button type="button" className="w-full flex items-center justify-center gap-2 py-2 px-4 border border-blue-200 hover:border-blue-300 hover:bg-blue-50 text-gray-700 font-medium rounded-md transition-colors shadow-sm">
+          <img src="./microsoft.png" alt="Microsoft" className="w-5 h-5 object-contain" />
+          Microsoft
+        </button>
+      </div>
     </div>
   )
 }
