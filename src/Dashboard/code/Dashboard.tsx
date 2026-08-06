@@ -61,12 +61,12 @@ export default function Dashboard() {
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredTenders.map((tender) => (
             <Link 
               key={tender.id} 
               to={`/tenders/${tender.id}`} 
-              className="group bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all block relative overflow-hidden"
+              className="group bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all block relative overflow-hidden min-w-0"
             >
               <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
               
@@ -82,8 +82,8 @@ export default function Dashboard() {
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="flex items-start justify-between mb-4 pr-6">
-                <span className="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded border border-blue-100">
+              <div className="flex items-start justify-between mb-4 pr-6 gap-2 flex-wrap sm:flex-nowrap">
+                <span className="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded border border-blue-100 max-w-[160px] truncate">
                   {tender.companyName}
                 </span>
                 <span className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded ${
