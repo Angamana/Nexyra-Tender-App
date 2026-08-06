@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Building2, FileText, Settings, LayoutDashboard, PlusCircle, Database, ChevronDown, Check, PanelLeftClose, PanelLeftOpen, LogOut } from 'lucide-react'
+import { Building2, FileText, Settings, LayoutDashboard, PlusCircle, Database, ChevronDown, Check, Menu, X, LogOut } from 'lucide-react'
 import { useAuth } from '../../lib/auth'
 import { useCompany } from '../../lib/companyContext'
 import { cn } from '../../lib/utils'
@@ -11,9 +11,9 @@ export default function DashboardLayout() {
   const { activeCompany, companies, setActiveCompany } = useCompany()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   
-  // Default open on desktop/laptop (width >= 768), collapsible on click
+  // Default CLOSED on screens under 1024px so content is NEVER squeezed on mobile/tablets/split screens!
   const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
-    return typeof window !== 'undefined' ? window.innerWidth >= 768 : true
+    return typeof window !== 'undefined' ? window.innerWidth >= 1024 : false
   })
 
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -28,6 +28,13 @@ export default function DashboardLayout() {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  // Auto-close sidebar on mobile/narrow windows when navigating
+  useEffect(() => {
+    if (window.innerWidth < 1024) {
+      setIsSidebarOpen(false)
+    }
+  }, [location.pathname])
+
   const navigation = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Companies', href: '/companies', icon: Building2 },
@@ -38,20 +45,20 @@ export default function DashboardLayout() {
 
   return (
     <div className="flex h-screen bg-[#f8fafc] text-gray-900 overflow-hidden font-sans relative">
-      {/* Mobile Drawer Overlay */}
+      {/* Mobile/Narrow Overlay Backdrop */}
       {isSidebarOpen && (
         <div 
           onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-gray-900/50 backdrop-blur-xs z-30 md:hidden animate-in fade-in duration-200"
+          className="fixed inset-0 bg-gray-900/40 backdrop-blur-xs z-30 lg:hidden animate-in fade-in duration-200"
         />
       )}
 
       {/* Collapsible Sidebar */}
       <aside 
         className={cn(
-          "bg-white border-r border-gray-200 flex flex-col z-40 transition-all duration-300 ease-in-out flex-shrink-0 shadow-md md:shadow-none",
-          "fixed inset-y-0 left-0 md:relative",
-          isSidebarOpen ? "w-64 translate-x-0 opacity-100" : "-translate-x-full md:translate-x-0 md:w-0 md:opacity-0 overflow-hidden border-none"
+          "bg-white border-r border-gray-200 flex flex-col z-40 transition-all duration-300 ease-in-out flex-shrink-0 shadow-xl lg:shadow-none",
+          "fixed inset-y-0 left-0 lg:relative",
+          isSidebarOpen ? "w-64 translate-x-0 opacity-100" : "-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 overflow-hidden border-none"
         )}
       >
         <div className="h-16 flex items-center px-6 border-b border-gray-100 justify-between min-w-[256px]">
@@ -61,14 +68,14 @@ export default function DashboardLayout() {
               <span className="text-gray-900">NEXYRA</span><span className="text-gray-500 text-sm font-medium ml-1">Tenders</span>
             </h1>
           </div>
-          {/* Hide Sidebar Button */}
+          {/* Close Sidebar Button */}
           <button 
             onClick={() => setIsSidebarOpen(false)}
             className="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
-            title="Collapse Sidebar"
-            aria-label="Collapse Sidebar"
+            title="Close Navigation Menu"
+            aria-label="Close Navigation Menu"
           >
-            <PanelLeftClose className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
         
@@ -79,9 +86,6 @@ export default function DashboardLayout() {
               <Link
                 key={item.name}
                 to={item.href}
-                onClick={() => {
-                  if (window.innerWidth < 768) setIsSidebarOpen(false)
-                }}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-200",
                   isActive 
@@ -99,9 +103,6 @@ export default function DashboardLayout() {
         <div className="p-4 border-t border-gray-100 bg-gray-50/50 min-w-[256px]">
           <Link 
             to="/tenders/new" 
-            onClick={() => {
-              if (window.innerWidth < 768) setIsSidebarOpen(false)
-            }}
             className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-md transition-colors shadow-md shadow-blue-600/20"
           >
             <PlusCircle className="w-4 h-4" />
@@ -110,26 +111,26 @@ export default function DashboardLayout() {
         </div>
       </aside>
 
-      {/* Main Content Area */}
+      {/* Main Workspace Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden bg-white min-w-0">
         {/* Topbar Header */}
-        <header className="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-4 sm:px-8 shadow-sm z-10 relative">
-          <div className="flex items-center gap-3 min-w-0">
-            {/* Prominent Sidebar Toggle Button */}
+        <header className="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-3 sm:px-6 lg:px-8 shadow-sm z-10 relative">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            {/* Extremely Obvious Menu Toggle Button */}
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs border border-blue-200/80 shadow-xs transition-all flex-shrink-0"
-              title={isSidebarOpen ? "Collapse Sidebar Menu" : "Expand Sidebar Menu"}
-              aria-label="Toggle Sidebar Menu"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-600/20 transition-all flex-shrink-0"
+              title={isSidebarOpen ? "Close Menu" : "Open Navigation Menu"}
+              aria-label="Toggle Navigation Menu"
             >
-              {isSidebarOpen ? <PanelLeftClose className="w-4 h-4 text-blue-600" /> : <PanelLeftOpen className="w-4 h-4 text-blue-600" />}
-              <span className="hidden sm:inline">{isSidebarOpen ? "Hide Menu" : "Show Menu"}</span>
+              {isSidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              <span>{isSidebarOpen ? "Close Menu" : "Menu"}</span>
             </button>
 
             {!isSidebarOpen && (
-              <div className="flex items-center gap-2 mr-2 flex-shrink-0">
+              <div className="hidden sm:flex items-center gap-2 mr-1 flex-shrink-0">
                 <img src="./logo.png" alt="NEXYRA Logo" className="h-6 w-6 object-contain" />
-                <span className="font-bold text-gray-900 text-sm tracking-wide hidden sm:inline">NEXYRA</span>
+                <span className="font-bold text-gray-900 text-sm tracking-wide">NEXYRA</span>
               </div>
             )}
 
@@ -137,12 +138,12 @@ export default function DashboardLayout() {
             <div className="relative min-w-0" ref={dropdownRef}>
               <div 
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-2 sm:gap-3 bg-gray-50 hover:bg-gray-100 px-3 sm:px-4 py-2 rounded-full border border-gray-200 shadow-sm cursor-pointer transition-colors max-w-[180px] sm:max-w-xs md:max-w-md"
+                className="flex items-center gap-1.5 sm:gap-2.5 bg-gray-50 hover:bg-gray-100 px-2.5 sm:px-4 py-2 rounded-full border border-gray-200 shadow-sm cursor-pointer transition-colors max-w-[160px] sm:max-w-xs md:max-w-md"
               >
                 <Building2 className="w-4 h-4 text-gray-500 flex-shrink-0" />
                 <span className="text-xs sm:text-sm font-medium text-gray-500 hidden md:block">Memory Bank:</span>
-                <span className="text-xs sm:text-sm font-bold text-gray-900 truncate">{activeCompany?.name || 'Select a Company'}</span>
-                <ChevronDown className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                <span className="text-xs sm:text-sm font-bold text-gray-900 truncate">{activeCompany?.name || 'Select Company'}</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-gray-400 flex-shrink-0 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
               </div>
 
               {/* Company Selection Dropdown */}
@@ -184,23 +185,23 @@ export default function DashboardLayout() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <div 
               onClick={signOut}
               title="Sign out"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600 border border-gray-200 hover:border-red-200 transition-colors cursor-pointer text-xs font-semibold shadow-sm"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-gray-100 hover:bg-red-50 text-gray-700 hover:text-red-600 border border-gray-200 hover:border-red-200 transition-colors cursor-pointer text-xs font-semibold shadow-sm"
             >
               <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-xs font-bold text-gray-800 shadow-xs">
                 {user?.initial || 'U'}
               </div>
               <span className="hidden sm:inline">Sign Out</span>
-              <LogOut className="w-3.5 h-3.5 text-gray-400 group-hover:text-red-600" />
+              <LogOut className="w-3.5 h-3.5 text-gray-400" />
             </div>
           </div>
         </header>
 
         {/* Main Workspace Page View */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 relative z-0 min-w-0">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-6 lg:p-8 relative z-0 min-w-0">
           <Outlet />
         </main>
       </div>
