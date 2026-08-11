@@ -76,13 +76,14 @@ export default function Dashboard() {
                   e.stopPropagation()
                   setTenderToDelete(tender.id)
                 }}
-                className="absolute top-2 right-2 p-1.5 rounded-md text-gray-400 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all z-10 shadow-sm"
+                className="absolute top-2.5 right-2.5 p-1.5 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 bg-gray-100/80 sm:bg-transparent border border-gray-200/60 sm:border-transparent opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-10 shadow-xs"
                 title="Delete Tender"
+                aria-label="Delete Tender"
               >
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 text-gray-500 hover:text-red-600" />
               </button>
 
-              <div className="flex items-start justify-between mb-4 pr-6 gap-2 flex-wrap sm:flex-nowrap">
+              <div className="flex items-start justify-between mb-4 pr-8 gap-2 flex-wrap sm:flex-nowrap">
                 <span className="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-1 rounded border border-blue-100 max-w-[160px] truncate">
                   {tender.companyName}
                 </span>
