@@ -117,26 +117,26 @@ export default function TemplateList() {
             <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Active Templates</h4>
             
             {templates.map(template => (
-              <div key={template.name} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg bg-white shadow-sm hover:border-blue-300 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-50 rounded-lg">
+              <div key={template.name} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border border-gray-200 rounded-lg bg-white shadow-sm hover:border-blue-300 transition-colors gap-3">
+                <div className="flex items-start sm:items-center gap-3 min-w-0">
+                  <div className="p-2 bg-blue-50 rounded-lg flex-shrink-0 mt-0.5 sm:mt-0">
                     <FileText className="w-5 h-5 text-blue-600" />
                   </div>
-                  <div>
+                  <div className="min-w-0 flex-1">
                     <p className="font-semibold text-sm text-gray-900">{template.name}</p>
                     <p className="text-xs text-gray-500">{template.desc}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 justify-end sm:justify-start flex-shrink-0">
                   <button 
                     onClick={() => setTemplateToPreview(template)}
-                    className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 text-sm font-medium px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors"
+                    className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 text-sm font-medium px-3 py-1.5 rounded-md hover:bg-blue-50 transition-colors bg-blue-50/50 sm:bg-transparent"
                   >
                     <Eye className="w-4 h-4" /> Preview
                   </button>
                   <button 
                     onClick={() => setTemplateToDelete(template.name)}
-                    className="text-red-500 hover:text-red-600 text-sm font-medium px-3 py-1.5 rounded-md hover:bg-red-50 transition-colors"
+                    className="text-red-500 hover:text-red-600 text-sm font-medium px-3 py-1.5 rounded-md hover:bg-red-50 transition-colors bg-red-50/50 sm:bg-transparent"
                   >
                     Remove
                   </button>
