@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { FileText, Upload, Eye, X, AlertTriangle, Download, Printer } from 'lucide-react'
+import { FileText, Upload, Eye, X, AlertTriangle } from 'lucide-react'
 import localforage from 'localforage'
 // @ts-ignore
 import mammoth from 'mammoth'
@@ -188,41 +188,59 @@ export default function TemplateList() {
 
       {/* Document Preview Modal */}
       {templateToPreview && createPortal(
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex flex-col z-[9999] animate-in fade-in duration-200">
-          <div className="flex items-center justify-between p-4 text-white bg-gradient-to-b from-black/80 to-transparent">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <FileText className="w-6 h-6 text-blue-400" />
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setTemplateToPreview(null)
+          }}
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex flex-col z-[9999] animate-in fade-in duration-200"
+        >
+          <div className="flex items-center justify-between p-3 sm:p-4 text-white bg-gray-900 border-b border-gray-800 gap-3 flex-wrap sm:flex-nowrap">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="p-2 bg-blue-500/20 rounded-lg flex-shrink-0">
+                <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
               </div>
-              <div>
-                <h3 className="font-medium text-white">{templateToPreview.name}</h3>
-                <p className="text-xs text-gray-300">Microsoft Word Document • {templateToPreview.file ? (templateToPreview.file.size / 1024).toFixed(1) + ' KB' : 'Built-in'}</p>
+              <div className="min-w-0">
+                <h3 className="font-semibold text-sm sm:text-base text-white truncate max-w-[200px] sm:max-w-md">{templateToPreview.name}</h3>
+                <p className="text-xs text-gray-400 truncate">Microsoft Word Document • {templateToPreview.file ? (templateToPreview.file.size / 1024).toFixed(1) + ' KB' : 'Built-in'}</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-300 hover:text-white">
-                <Printer className="w-5 h-5" />
-              </button>
-              <button className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-300 hover:text-white">
-                <Download className="w-5 h-5" />
-              </button>
-              <div className="w-px h-6 bg-gray-600 mx-2"></div>
+            
+            <div className="flex items-center gap-2 sm:gap-3 ml-auto flex-shrink-0">
               <button 
                 onClick={() => setTemplateToPreview(null)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-300 hover:text-white"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm rounded-lg transition-all shadow-md active:scale-95"
+                title="Close Preview"
+                aria-label="Close Preview"
               >
-                <X className="w-6 h-6" />
+                <X className="w-4 h-4" />
+                <span>Close</span>
               </button>
             </div>
           </div>
 
-          <div className="flex-1 overflow-auto p-8 flex justify-center pb-24 items-start">
+          <div 
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setTemplateToPreview(null)
+            }}
+            className="flex-1 overflow-auto p-4 sm:p-8 flex justify-center pb-24 items-start"
+          >
             {/* Rendered HTML Viewer */}
-            <div className="bg-white max-w-4xl w-full min-h-[1056px] h-max shadow-2xl rounded-sm p-16 animate-in slide-in-from-bottom-8 duration-300 relative text-gray-900 leading-relaxed preview-content"
-                 dangerouslySetInnerHTML={{ __html: previewHtml || '<div class="flex items-center justify-center h-full"><div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div></div>' }}
+            <div className="bg-white max-w-4xl w-full min-h-[800px] sm:min-h-[1056px] h-max shadow-2xl rounded-md p-6 sm:p-16 animate-in slide-in-from-bottom-8 duration-300 relative text-gray-900 leading-relaxed preview-content"
+                 dangerouslySetInnerHTML={{ __html: previewHtml || '<div class="flex items-center justify-center h-64"><div class="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div></div>' }}
             >
             </div>
           </div>
+
+          {/* Floating Bottom Close Button for Mobile & Easy Access */}
+          <button 
+            onClick={() => setTemplateToPreview(null)}
+            className="fixed bottom-6 right-6 z-[10000] bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 border-2 border-white/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+            title="Close Document Preview"
+          >
+            <X className="w-5 h-5" />
+            <span>Close Preview</span>
+          </button>
+
           <style dangerouslySetInnerHTML={{ __html: `
             .preview-content h1 { font-size: 2.25rem; font-weight: bold; margin-bottom: 1rem; color: #111827; }
             .preview-content h2 { font-size: 1.875rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1.5rem; color: #111827; }
