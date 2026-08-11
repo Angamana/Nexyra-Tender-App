@@ -231,16 +231,6 @@ export default function TemplateList() {
             </div>
           </div>
 
-          {/* Floating Bottom Close Button for Mobile & Easy Access */}
-          <button 
-            onClick={() => setTemplateToPreview(null)}
-            className="fixed bottom-6 right-6 z-[10000] bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-5 py-3 rounded-full shadow-2xl flex items-center gap-2 border-2 border-white/20 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-            title="Close Document Preview"
-          >
-            <X className="w-5 h-5" />
-            <span>Close Preview</span>
-          </button>
-
           <style dangerouslySetInnerHTML={{ __html: `
             .preview-content h1 { font-size: 2.25rem; font-weight: bold; margin-bottom: 1rem; color: #111827; }
             .preview-content h2 { font-size: 1.875rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1.5rem; color: #111827; }
